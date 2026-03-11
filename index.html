@@ -6,75 +6,35 @@
     <link rel="manifest" href="manifest.json">
     <title>זמני היום ופרשה</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* הוספתי עיצוב קטן לזמנים שייראו טוב יותר */
-        .time-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
-        .time-row:last-child { border-bottom: none; }
-        .value { font-weight: bold; }
-    </style>
 </head>
 <body>
     <div class="card">
         <button class="settings-toggle" onclick="toggleSettings()">⚙️ הגדרות תצוגה</button>
-        
-        <div id="settingsPanel" class="settings-panel" style="display:none; background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;">
-            <div class="settings-row" style="margin-bottom:10px;">
-                <span>גודל כתב:</span>
-                <input type="range" id="sizeInput" min="14" max="26" oninput="updateStyle('font-size', this.value + 'px', true)">
-            </div>
-            <div class="settings-row" style="margin-bottom:10px;">
-                <span>צבע רקע:</span>
-                <input type="color" id="bgInput" onchange="updateStyle('bg', this.value, true)">
-            </div>
-            <button onclick="toggleSettings()" style="background:#7f8c8d; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">סגור</button>
+        <div id="settingsPanel" class="settings-panel">
+            <div class="settings-row"><span>גודל כתב:</span><input type="range" id="sizeInput" min="14" max="26" oninput="updateStyle('font-size', this.value + 'px', true)"></div>
+            <div class="settings-row"><span>צבע רקע:</span><input type="color" id="bgInput" onchange="updateStyle('bg', this.value, true)"></div>
+            <button onclick="toggleSettings()" style="background:#7f8c8d; font-size: 12px;">סגור</button>
         </div>
-
         <div class="header-info">
-            <div id="parashaDisplay" class="parasha" style="font-size: 1.2em; font-weight: bold; color: #2c3e50;">טוען פרשה...</div>
-            <div id="hebrewDateDisplay" style="color: #7f8c8d;">טוען תאריך...</div>
+            <div id="parashaDisplay" class="parasha">טוען...</div>
+            <div id="hebrewDateDisplay"></div>
         </div>
-
-        <div class="section">
-            <h2>בחר עיר:</h2>
-            <select id="citySelect" onchange="changeCity()" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; font-size:16px; background: white;">
-                <option value="31.76,35.21">ירושלים</option>
-                <option value="32.08,34.78">תל אביב</option>
-                <option value="32.81,34.98">חיפה</option>
-                <option value="32.09,34.83">בני ברק</option>
-                <option value="31.80,34.65">אשדוד</option>
-                <option value="31.25,34.79">באר שבע</option>
-                <option value="32.32,34.85">נתניה</option>
-                <option value="32.46,35.04">חריש</option>
-            </select>
-        </div>
-
         <div class="section">
             <h2>זמני היום: <span id="locName">ירושלים</span></h2>
-            <div id="zmanimList" style="background: #fff; padding: 10px; border-radius: 8px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);">
-                </div>
+            <div id="zmanimList"></div>
         </div>
-
         <div class="section">
-            <h2>🚗 מחשבון הגעה ליעד</h2>
-            <input type="text" id="destInput" placeholder="עיר ורחוב ליעד" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:10px; box-sizing: border-box;">
-            <button onclick="calculate()" style="width:100%; padding:12px; background:#3498db; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">חשב הגעה מול צאת הכוכבים</button>
-            
-            <div id="resultBox" style="display:none; background:#e8f4fd; padding:15px; border-radius:10px; margin-top:15px; text-align:center; border: 1px solid #b3d7ff;">
-                <div style="margin-bottom: 5px;">זמן הגעה משוער: <span id="arrTime" style="font-weight:bold; color: #2c3e50;">--:--</span></div>
-                <div id="diffTime" style="font-weight:bold; font-size: 1.2em;">--</div>
-                <small style="color: #666; display: block; margin-top: 5px;">(החישוב מתבסס על צאת הכוכבים ביעד)</small>
-                <a id="wazeLink" style="display:block; background:#33ccff; color:black; text-decoration:none; padding:12px; border-radius:8px; margin-top:10px; font-weight:bold;" target="_blank">ניווט לכתובת ב-Waze 📍</a>
+            <h2>🚗 מחשבון הגעה</h2>
+            <input type="text" id="destInput" placeholder="עיר ורחוב ליעד">
+            <button onclick="calculate()">חשב הגעה ושקיעה</button>
+            <div id="resultBox" style="display:none; background:#e8f4fd; padding:10px; border-radius:10px; margin-top:10px; text-align:center;">
+                <div>הגעה משוערת: <span id="arrTime" style="font-weight:bold">--</span></div>
+                <div>זמן לפני שקיעה: <span id="diffTime" style="color:green; font-weight:bold">--</span></div>
+                <a id="wazeLink" style="display:block; background:#33ccff; color:black; text-decoration:none; padding:10px; border-radius:8px; margin-top:10px; font-weight:bold;" target="_blank">פתח ב-Waze 📍</a>
             </div>
         </div>
-
-        <button style="background:#27ae60; color:white; border:none; width:100%; padding:14px; border-radius:8px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 16px;" onclick="initGPS()">השתמש במיקום GPS שלי 📍</button>
+        <button style="background:#27ae60; color:white; border:none; width:100%; padding:10px; border-radius:8px;" onclick="initGPS()">השתמש במיקום GPS שלי 📍</button>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
