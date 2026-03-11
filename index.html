@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
+<!DOCTYPE html><html lang="he" dir="rtl"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
     <title>זמני היום ופרשה</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css"></head><body>
     <div class="card">
         <button class="settings-toggle" onclick="toggleSettings()">⚙️ הגדרות תצוגה</button>
         <div id="settingsPanel" class="settings-panel">
@@ -20,6 +16,19 @@
             <div id="hebrewDateDisplay"></div>
         </div>
         <div class="section">
+            <h2>בחר עיר:</h2>
+            <select id="citySelect" onchange="changeCity()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; font-size:16px;">
+                <option value="jerusalem">ירושלים</option>
+                <option value="telaviv">תל אביב</option>
+                <option value="haifa">חיפה</option>
+                <option value="bneibrak">בני ברק</option>
+                <option value="ashdod">אשדוד</option>
+                <option value="beersheba">באר שבע</option>
+                <option value="netanya">נתניה</option>
+                <option value="harish">חריש</option>
+            </select>
+        </div>
+        <div class="section">
             <h2>זמני היום: <span id="locName">ירושלים</span></h2>
             <div id="zmanimList"></div>
         </div>
@@ -29,12 +38,10 @@
             <button onclick="calculate()">חשב הגעה ושקיעה</button>
             <div id="resultBox" style="display:none; background:#e8f4fd; padding:10px; border-radius:10px; margin-top:10px; text-align:center;">
                 <div>הגעה משוערת: <span id="arrTime" style="font-weight:bold">--</span></div>
-                <div>זמן לפני שקיעה: <span id="diffTime" style="color:green; font-weight:bold">--</span></div>
+                <div>זמן לפני שקיעה: <span id="diffTime" style="font-weight:bold">--</span></div>
                 <a id="wazeLink" style="display:block; background:#33ccff; color:black; text-decoration:none; padding:10px; border-radius:8px; margin-top:10px; font-weight:bold;" target="_blank">פתח ב-Waze 📍</a>
             </div>
         </div>
         <button style="background:#27ae60; color:white; border:none; width:100%; padding:10px; border-radius:8px;" onclick="initGPS()">השתמש במיקום GPS שלי 📍</button>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+    <script src="script.js"></script></body></html>
