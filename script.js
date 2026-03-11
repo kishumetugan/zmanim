@@ -22,7 +22,6 @@ async function getZmanim(lat, lon, n) {
     const data = await res.json();
     const z = data.times;
 
-    // רשימת הזמנים להצגה (כולל עלות השחר וצאת הכוכבים)
     const items = {
         "alotHaShachar": "עלות השחר",
         "sunrise": "נץ החמה",
@@ -41,20 +40,13 @@ async function getZmanim(lat, lon, n) {
         }
     }
 
-    // חישוב חצות לפי רבי נחמן (6 ו-8 שעות מצאת הכוכבים)
     if(z.tzeit7080) {
         const tzeitDate = new Date(z.tzeit7080);
-        
-        // תחילת חצות (6 שעות אחרי צאת הכוכבים)
         const chatzotStart = new Date(tzeitDate.getTime() + (6 * 60 * 60 * 1000));
-        const chatzotStartStr = chatzotStart.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
-        
-        // סוף חצות (8 שעות אחרי צאת הכוכבים)
         const chatzotEnd = new Date(tzeitDate.getTime() + (8 * 60 * 60 * 1000));
-        const chatzotEndStr = chatzotEnd.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
 
-        html += `<div class="time-row" style="background: #fff8e1; border-radius: 5px; margin-top: 5px; border: 1px solid #ffe082;"><span><b>חצות (רבי נחמן)</b></span><span class="value">${chatzotStartStr}</span></div>`;
-        html += `<div class="time-row" style="background: #fff8e1; border-radius: 5px; border: 1px solid #ffe082; border-top: none;"><span>סוף חצות</span><span class="value">${chatzotEndStr}</span></div>`;
+        html += `<div class="time-row" style="background: #fffde7; border: 1px solid #fff59d; margin-top: 10px; padding: 5px; border-radius: 5px;"><span><b>חצות (רבי נחמן)</b></span><span class="value">${chatzotStart.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'})}</span></div>`;
+        html += `<div class="time-row" style="background: #fffde7; border: 1px solid #fff59d; border-top: none; padding: 5px; border-radius: 5px;"><span>סוף חצות</span><span class="value">${chatzotEnd.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'})}</span></div>`;
     }
 
     document.getElementById('zmanimList').innerHTML = html;
@@ -67,35 +59,21 @@ async function calculate() {
     const g = await gRes.json(); 
     if(!g.length) return alert("יעד לא נמצא");
     const dLat = g[0].lat, dLon = g[0].lon;
-    
     const rRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${oLon},${oLat};${dLon},${dLat}?overview=false`);
     const r = await rRes.json();
     const arr = new Date(Date.now() + r.routes[0].duration * 1000);
-    
     const zRes = await fetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${dLat}&longitude=${dLon}&il=on`);
     const z = await zRes.json(); const sun = new Date(z.times.sunset);
-    
     document.getElementById('arrTime').innerText = arr.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
     document.getElementById('diffTime').innerText = Math.floor((sun-arr)/60000) + " דקות";
     document.getElementById('resultBox').style.display = 'block';
     document.getElementById('wazeLink').href = `https://waze.com/ul?ll=${dLat},${dLon}&navigate=yes`;
 }
 
-function initGPS() { 
-    navigator.geolocation.getCurrentPosition(p => { 
-        oLat=p.coords.latitude; oLon=p.coords.longitude; 
-        getZmanim(oLat,oLon,"המיקום שלך"); 
-    }); 
-}
-
-function toggleSettings() { 
-    const s = document.getElementById('settingsPanel'); 
-    s.style.display = s.style.display==='block'?'none':'block'; 
-}
+function initGPS() { navigator.geolocation.getCurrentPosition(p => { oLat=p.coords.latitude; oLon=p.coords.longitude; getZmanim(oLat,oLon,"המיקום שלך"); }); }
+function toggleSettings() { const s = document.getElementById('settingsPanel'); s.style.display = s.style.display==='block'?'none':'block'; }
 
 window.onload = () => { 
-    fetchInfo(); getZmanim(oLat,oLon,"ירושלים");
-    if(localStorage.getItem('pref_bg')) updateStyle('bg', localStorage.getItem('pref_bg'));
+    fetchInfo(); getZmanim(oLat,oLon,"ירושלים"); 
+    if(localStorage.getItem('pref_bg')) updateStyle('bg', localStorage.getItem('pref_bg')); 
 };
-
-if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
